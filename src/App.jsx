@@ -194,7 +194,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
           <label className="small">Bet</label>
           <input className="input" type="number" value={bet} onChange={e=>setBet(Number(e.target.value)||0)} />
         </div>
-        <div style={{marginLeft:'auto'}} className="small">Target (hidden)</div>
+        <div style={{marginLeft:'auto', display:'none'}} className="small"></div>
         <div>
           <button className="btn primary" onClick={start} disabled={isRunning || globalLock}>Start</button>
         </div>
@@ -262,16 +262,24 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
   }
 
   function computeMultiplier(safeRevealed){
-    // dynamic multiplier: lower profit for small mine counts
-    const safeTotal = total - mines
-    const mineFactor = 0.18 + (mines / total) * 1.1
-    const perSafe = 0.28 * mineFactor
-    const base = 1 + safeRevealed * perSafe * (safeTotal / Math.max(1, safeTotal))
-    const multiplier = Math.max(0, base * (1 - 0.06))
-    return multiplier
+    const safeTotal = total - mines;
+    const mineRatio = mines / total;
+    // perSafe scales with number of mines: small for low mines, larger for many mines
+    const perSafe = 0.05 + Math.pow(mineRatio, 1.5) * 2.5;
+    const base = 1 + safeRevealed * perSafe * (safeTotal / Math.max(1, safeTotal));
+    // global dampening so starting profits are lower for low mine counts
+    const damp = 1 - (0.08 * (1 - mineRatio)); // lower mineRatio => slightly lower multiplier
+    let multiplier = Math.max(0, base * damp);
+    // enforce break-even rule: for 1-4 mines, require at least 2 safe reveals to make profit
+    if (mines <= 4 && safeRevealed < 2) {
+      // do not allow profitable cashout for less than 2 safe reveals
+      return Math.min(1, Math.round(multiplier * 100) / 100);
+    }
+    // round to 2 decimals
+    return Math.round(multiplier * 100) / 100;
   }
 
-  function computeLive(){
+  function computeLive(){(){
     const revealedCount = Object.keys(revealed).length
     const revealedMines = minePositions.filter(i => revealed[i]).length
     const safeRevealed = Math.max(0, revealedCount - revealedMines)
@@ -313,7 +321,7 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
           <label className="small">Mines</label>
           <input className="input small" type="number" min="1" max={total-1} value={mines} onChange={e=>setMines(Math.max(1, Math.min(total-1, Number(e.target.value)||1)))} />
         </div>
-        <div style={{marginLeft:'auto'}} className="small"><span style={{display:'none'}}>Seed:</span> N/A</div>
+        <div style={{marginLeft:'auto', display:'none'}} className="small"></div>
       </div>
 
       <div className="small" style={{marginBottom:8}}>

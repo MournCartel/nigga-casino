@@ -16,7 +16,7 @@ body{margin:0;background:linear-gradient(180deg,var(--bg),#050310);font-family:I
 .main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px}
 .nav-btn{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:10px;border:none;background:transparent;color:var(--muted);cursor:pointer}
 .nav-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white}
-.panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
 .small{color:var(--muted);font-size:13px}
 .input{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);color:inherit;width:140px}
 .input.small{width:90px}
@@ -28,8 +28,8 @@ body{margin:0;background:linear-gradient(180deg,var(--bg),#050310);font-family:I
 .recent-item.win{color:var(--win)}
 .recent-item.loss{color:var(--loss)}
 .grid{display:grid;gap:10px}
-.grid.mines{grid-template-columns:repeat(5,64px);justify-content:start}
-.tile{width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-weight:800;background:rgba(255,255,255,0.02);cursor:pointer}
+.grid.mines{grid-template-columns:repeat(5,minmax(48px,1fr));gap:10px;justify-content:stretch}
+.tile{width:100%;aspect-ratio:1/1;border-radius:8px;border:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-weight:800;background:rgba(255,255,255,0.02);cursor:pointer}
 .tile.safe{background:rgba(16,185,129,0.15);color:var(--win)}
 .tile.mine{background:rgba(239,68,68,0.15);color:var(--loss)}
   .recent-list{margin-top:12px;flex:1;overflow:auto;display:flex;flex-direction:column;}
