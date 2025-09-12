@@ -14,7 +14,17 @@ function loadState(){
 }
 function saveState(obj){ try{ localStorage.setItem(LS_KEY, JSON.stringify(obj)) }catch(e){} }
 
-export default function App(){
+export default function App()
+  function handleCrashButton() {
+    if (crashRunning) {
+      handleCrashCashout();
+    } else if (crashCrashed) {
+      startNewCrashGame();
+    } else {
+      startCrash();
+    }
+  }
+    {
   const [view, setView] = useState('crash') // crash | mines | history
   const [data, setData] = useState(()=> loadState())
   const [balance, setBalance] = useState(()=> {
