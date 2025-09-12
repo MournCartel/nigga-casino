@@ -34,13 +34,51 @@ button:active, .big-button:active, .nav-btn:active {
   box-shadow: 0 0 20px rgba(160, 100, 255, 0.4);
 }
 
+/* Mourgan theme additions */
 
-/* Crash text enlarge + red when crash happens */
-.crash-text {
-  transition: all 0.5s ease-in-out;
+/* Full-page animated dark->purple gradient */
+:root{
+  --g-top:#020205;
+  --g-mid:#0b0720;
+  --g-bottom:#1f0a3a;
 }
-.crash-text.crashed {
-  color: #ff4444;
-  font-size: 2.5em;
-  font-weight: bold;
+html, body, #root { height: 100%; }
+body {
+  background: linear-gradient(180deg, var(--g-top), var(--g-mid) 50%, var(--g-bottom));
+  background-size: 400% 400%;
+  animation: mourganGradient 20s ease infinite;
+  margin: 0;
 }
+@keyframes mourganGradient {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* Sticky header */
+.header { position: sticky; top: 0; z-index: 60; backdrop-filter: blur(6px); }
+
+/* Enlarge balance and top-up button */
+.header .balance { font-size: 1.15rem; font-weight: 900; color: var(--accent); }
+.header .topup-btn { padding: 8px 12px; font-weight:700; border-radius:8px; }
+
+/* Stretch game panels full width under header */
+.app, .main, .content, .panel { max-width: none !important; width: 100% !important; }
+/* Limit winnings/history panel width if existing container uses .sidebar */
+.sidebar { max-width: 320px; }
+/* Make games area use remaining space */
+.content-area { width: calc(100% - 340px); display: block; }
+
+/* Keep button colors intact (don't override). Keep hover/glow as before */
+
+/* Remove visible labels like seed/target/demo by hiding elements that contain these words (best-effort) */
+[data-label*="seed" i], [data-label*="target" i] { display: none !important; }
+:where(*:not(script)) :where(:contains("Seed"), :contains("seed"), :contains("Target"), :contains("target"), :contains("Demo"), :contains("demo")) { display: none; }
+/* Fallback: explicit hiding for common label classes/ids */
+.seed-label, .target-label, .seed, .target, .demo-label { display: none !important; }
+
+/* Ensure inputs still look flushed (no white boxes) */
+input[type=number], input[type=text], .input { background: rgba(255,255,255,0.02) !important; border: 1px solid rgba(255,255,255,0.04) !important; color: inherit !important; }
+
+/* minor: ensure recent list uses its container height */
+.recent-list { display:flex; flex-direction:column; overflow:auto; }

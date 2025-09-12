@@ -32,14 +32,16 @@ export default function App(){
       const next = { stats: {...prev.stats}, records: [...prev.records, result] }
       // update totals
       next.stats.totalBet = (next.stats.totalBet || 0) + (result.bet || 0)
-      if (result.payout && result.payout > 0) next.stats.totalWon = (next.stats.totalWon || 0) + result.payout
-      if (result.profit < 0) next.stats.totalLost = (next.stats.totalLost || 0) + Math.abs(result.profit)
+      // count net profit only
+      const net = (result.profit || 0)
+      if (net > 0) next.stats.totalWon = (next.stats.totalWon || 0) + net
+      if (net < 0) next.stats.totalLost = (next.stats.totalLost || 0) + Math.abs(net)
       saveState(next)
       return next
     })
   }
 
-  // top up handler: demo adds +100 and increments totalToppedUp
+  // top up handler:  adds +100 and increments totalToppedUp
   function doTopUp(){
     setBalance(b => {
       const nb = Math.round((b + 100)*100)/100
@@ -82,9 +84,9 @@ export default function App(){
 
       <div style={{flex:1, display:'flex', flexDirection:'column'}}>
         <header className="header">
-          <div style={{fontWeight:800, fontSize:18}}>Minecraft Casino — Demo</div>
+          <div style={{fontWeight:800, fontSize:18}}>Mourgan — </div>
           <div style={{display:'flex',gap:12,alignItems:'center'}}>
-            <div style={{textAlign:'right'}} className="small"><div>Player1</div><div style={{fontWeight:800}}>${balance.toFixed(2)}</div></div>
+            <div style={{textAlign:'right'}} className="small"><div>Player1</div><div style={{fontWeight:800}}><span class="balance">${balance.toFixed(2)}</span></div></div>
             <div>
               <button className="btn primary" onClick={doTopUp}>+ TOP UP</button>
             </div>
@@ -109,11 +111,10 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
   const [isRunning, setIsRunning] = useState(false)
   const [multiplier, setMultiplier] = useState(1.00)
   const [cashedAt, setCashedAt] = useState(null)
-  const [crashed, setCrashed] = useState(false)
   const rafRef = useRef(null)
   const lastRef = useRef(null)
   const multiplierRef = useRef(1.00)
-  const [target, setTarget] = useState(2.0)
+  const [
   const baseSpeedRef = useRef(0.7) // tuning value
   const accel = 1.6 // exponent for speed growth
 
@@ -121,8 +122,8 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     return ()=>{ if(rafRef.current) cancelAnimationFrame(rafRef.current) }
   },[])
 
-  function computeTargetFromSeed(){
-    // generate a random-ish crash point using Math.random (demo)
+  function compute
+    // generate a random-ish crash point using Math.random ()
     const r = Math.random()
     const val = 1 + Math.pow(1 - r, -1.1) * 0.6
     return Math.round(Math.max(1.01, val) * 100) / 100
@@ -134,13 +135,12 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     // deduct bet immediately
     setBalance(b => Math.round((b - bet)*100)/100)
     setCashedAt(null)
-    setCrashed(false)
     setIsRunning(true)
     setMultiplier(1.00)
     multiplierRef.current = 1.00
     lastRef.current = null
-    const t = computeTargetFromSeed()
-    setTarget(t)
+    const t = compute
+    set
     // start RAF
     rafRef.current = requestAnimationFrame(tick)
     setGlobalLock(true)
@@ -150,15 +150,14 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     if (!lastRef.current) lastRef.current = ts
     const dt = (ts - lastRef.current) / 1000
     lastRef.current = ts
-    // speed grows as multiplier grows (not based on target)
+    // speed grows as multiplier grows (not based on 
     const speed = baseSpeedRef.current * Math.pow(Math.max(1, multiplierRef.current), accel - 1)
     const next = multiplierRef.current + dt * speed
     multiplierRef.current = Math.round(next * 100) / 100
     setMultiplier(multiplierRef.current)
 
     // bust check
-    if (multiplierRef.current >= target){
-      setCrashed(true);
+    if (multiplierRef.current >= 
       // bust event
       setIsRunning(false)
       setGlobalLock(false)
@@ -193,20 +192,20 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
       <div style={{display:'flex',gap:12,alignItems:'center'}}>
         <div style={{display:'flex',flexDirection:'column'}}>
           <label className="small">Bet</label>
-          <input className="input" type="number" value={bet} onChange={e=>setBet(Number(e.target.value)||0)} />
+          <input className="input" type="number" value={bet} onChange={e=>setBet(Number(e.
         </div>
-        <div style={{marginLeft:'auto'}} className="small">Target (hidden)</div>
-        
-        <div style={{marginLeft:'auto'}} className="crash-button-container">
-          <button className="big-button" onClick={() => { if (isRunning) { doCashout(); } else { start(); } }}>
-            {isRunning ? 'Cash Out' : (cashedAt !== null || crashed) ? 'New Game' : 'Start'}
-          </button>
+        <div style={{marginLeft:'auto'}} className="small"></div>
+        <div>
+          <button className="btn primary" onClick={start} disabled={isRunning || globalLock}>Start</button>
         </div>
-
+        <div>
+          <button className="btn ghost" onClick={doCashout} disabled={!isRunning || cashedAt!==null}>Cash Out</button>
+        </div>
+      </div>
 
       <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:220}} className="panel">
         <div style={{textAlign:'center'}}>
-          <div className={`crash-text ${crashed ? 'crashed' : ''}`} style={{fontSize:56,fontWeight:900}}>{multiplier.toFixed(2)}x</div>
+          <div style={{fontSize:56,fontWeight:900}}>{multiplier.toFixed(2)}x</div>
           <div className="small" style={{marginTop:8}}>{isRunning ? 'RUNNING' : cashedAt ? `Cashed at ${cashedAt}x` : 'READY'}</div>
         </div>
       </div>
@@ -308,13 +307,13 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
       <div style={{display:'flex',gap:12,alignItems:'center'}}>
         <div style={{display:'flex',flexDirection:'column'}}>
           <label className="small">Bet</label>
-          <input className="input" type="number" value={stake} onChange={e=>setStake(Number(e.target.value)||0)} />
+          <input className="input" type="number" value={stake} onChange={e=>setStake(Number(e.
         </div>
         <div style={{display:'flex',flexDirection:'column'}}>
           <label className="small">Mines</label>
-          <input className="input small" type="number" min="1" max={total-1} value={mines} onChange={e=>setMines(Math.max(1, Math.min(total-1, Number(e.target.value)||1)))} />
+          <input className="input small" type="number" min="1" max={total-1} value={mines} onChange={e=>setMines(Math.max(1, Math.min(total-1, Number(e.
         </div>
-        <div style={{marginLeft:'auto'}} className="small">Seed: N/A</div>
+        <div style={{marginLeft:'auto'}} className="small"></div>
       </div>
 
       <div className="small" style={{marginBottom:8}}>
