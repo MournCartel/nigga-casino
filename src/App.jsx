@@ -62,11 +62,28 @@ export default function App(){
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
           <div><strong style={{fontSize:18}}>GAMES</strong></div>
         </div>
-        <div style={{display:'flex',flexDirection:'column',gap:8}}>
-          <button className={'nav-btn ' + (view==='crash' ? 'active' : '')} onClick={() => setView('crash')}>Crash</button>
-          <button className={'nav-btn ' + (view==='mines' ? 'active' : '')} onClick={() => setView('mines')}>Mines</button>
-          <button className={'nav-btn ' + (view==='history' ? 'active' : '')} onClick={() => setView('history')}>History</button>
-        </div></div></div> onClick={()=>setView('crash')}>Crash</button></div>
+        
+<div style={{display:'flex',flexDirection:'column',gap:8}}>
+  <button
+    className={'nav-btn ' + (view==='crash' ? 'active' : '')}
+    onClick={() => setView('crash')}
+  >
+    Crash
+  </button>
+  <button
+    className={'nav-btn ' + (view==='mines' ? 'active' : '')}
+    onClick={() => setView('mines')}
+  >
+    Mines
+  </button>
+  <button
+    className={'nav-btn ' + (view==='history' ? 'active' : '')}
+    onClick={() => setView('history')}
+  >
+    History
+  </button>
+</div>
+</div></div> onClick={()=>setView('crash')}>Crash</button></div>
           <button className={'nav-btn ' + (view==='mines' ? 'active' : '')} onClick={() => setView('mines')}>Mines</button>
           <button className={'nav-btn ' + (view==='history' ? 'active' : '')} onClick={()=>setView('history')}>History</button>
         </div>
