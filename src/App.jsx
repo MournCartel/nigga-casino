@@ -262,9 +262,8 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
   }
 
   function computeMultiplier(safeCount, mines) {
-    if (mines <= 4 && safeCount < 2) return 1;
     const ratio = mines / 25;
-    const base = 0.05 + Math.pow(ratio, 1.5) * 2.5;
+    const base = 0.02 + Math.pow(ratio, 1.2) * 1.2;
     return Math.max(1, (1 + base) ** safeCount);
 }
 
