@@ -114,7 +114,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
   const rafRef = useRef(null)
   const lastRef = useRef(null)
   const multiplierRef = useRef(1.00)
-  const [target, setTarget] = useState(2.0)
+  const [target, set] = useState(2.0)
   const baseSpeedRef = useRef(0.7) // tuning value
   const accel = 1.6 // exponent for speed growth
 
@@ -122,7 +122,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     return ()=>{ if(rafRef.current) cancelAnimationFrame(rafRef.current) }
   },[])
 
-  function computeTargetFromSeed(){
+  function computeFrom(){
     // generate a random-ish crash point using Math.random ()
     const r = Math.random()
     const val = 1 + Math.pow(1 - r, -1.1) * 0.6
@@ -139,8 +139,8 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     setMultiplier(1.00)
     multiplierRef.current = 1.00
     lastRef.current = null
-    const t = computeTargetFromSeed()
-    setTarget(t)
+    const t = computeFrom()
+    set(t)
     // start RAF
     rafRef.current = requestAnimationFrame(tick)
     setGlobalLock(true)
@@ -194,7 +194,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
           <label className="small">Bet</label>
           <input className="input" type="number" value={bet} onChange={e=>setBet(Number(e.target.value)||0)} />
         </div>
-        <div style={{marginLeft:'auto', display:'none'}} className="small"></div>
+        <div style={{marginLeft:'auto'}} className="small"> (hidden)</div>
         <div>
           <button className="btn primary" onClick={start} disabled={isRunning || globalLock}>Start</button>
         </div>
@@ -262,24 +262,20 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
   }
 
   function computeMultiplier(safeRevealed){
-    const safeTotal = total - mines;
-    const mineRatio = mines / total;
-    // perSafe scales with number of mines: small for low mines, larger for many mines
-    const perSafe = 0.05 + Math.pow(mineRatio, 1.5) * 2.5;
-    const base = 1 + safeRevealed * perSafe * (safeTotal / Math.max(1, safeTotal));
-    // global dampening so starting profits are lower for low mine counts
-    const damp = 1 - (0.08 * (1 - mineRatio)); // lower mineRatio => slightly lower multiplier
-    let multiplier = Math.max(0, base * damp);
-    // enforce break-even rule: for 1-4 mines, require at least 2 safe reveals to make profit
-    if (mines <= 4 && safeRevealed < 2) {
-      // do not allow profitable cashout for less than 2 safe reveals
-      return Math.min(1, Math.round(multiplier * 100) / 100);
-    }
-    // round to 2 decimals
-    return Math.round(multiplier * 100) / 100;
+    // dynamic multiplier: lower profit for small mine counts
+    const safeTotal = total - mines
+    const mineFactor = 0.18 + (mines / total) * 1.1
+    const perSafe = 0.28 * mineFactor
+    const base = 1 + safeRevealed * perSafe * (safeTotal / Math.max(1, safeTotal))
+    const multiplier = Math.max(0, base * (1 - 0.06))
+    // Adjusted multiplier for Mines
+    if (mines <= 4 && safeCount < 2) return 1;
+    const ratio = mines / 25;
+    const base = 0.05 + Math.pow(ratio, 1.5) * 2.5;
+    return Math.max(1, (1 + base) ** safeCount);
   }
 
-  function computeLive(){(){
+  function computeLive(){
     const revealedCount = Object.keys(revealed).length
     const revealedMines = minePositions.filter(i => revealed[i]).length
     const safeRevealed = Math.max(0, revealedCount - revealedMines)
@@ -321,7 +317,7 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
           <label className="small">Mines</label>
           <input className="input small" type="number" min="1" max={total-1} value={mines} onChange={e=>setMines(Math.max(1, Math.min(total-1, Number(e.target.value)||1)))} />
         </div>
-        <div style={{marginLeft:'auto', display:'none'}} className="small"></div>
+        <div style={{marginLeft:'auto'}} className="small">: N/A</div>
       </div>
 
       <div className="small" style={{marginBottom:8}}>
