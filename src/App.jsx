@@ -63,8 +63,8 @@ export default function App(){
           <div><strong style={{fontSize:18}}>GAMES</strong></div>
         </div>
         <div style={{display:'flex',flexDirection:'column',gap:8}}>
-          <button className={'nav-btn ' + (view==='crash' ? 'active' : '')} onClick={()=>setView('crash')}>Crash</button>
-          <button className={'nav-btn ' + (view==='mines' ? 'active' : '')} onClick={()=>setView('mines')}>Mines</button>
+          <button className={'nav-btn ' + (view==='crash' ? 'active' : '')} onClick={()=>setView('crash')}>Crash</button></div>
+          <button className={'nav-btn ' + (view==='mines' ? 'active' : '')} onClick={() => setView('mines')}>Mines</button>
           <button className={'nav-btn ' + (view==='history' ? 'active' : '')} onClick={()=>setView('history')}>History</button>
         </div>
 
@@ -194,10 +194,10 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
         </div>
         <div style={{marginLeft:'auto'}} className="small">Target (hidden)</div>
         <div>
-          <button className="btn primary" onClick={start} disabled={isRunning || globalLock}>Start</button>
+          <div className="crash-button-container"><button className="big-button">{crashActive ? "Cash Out" : "Start"}</button>
         </div>
         <div>
-          <button className="btn ghost" onClick={doCashout} disabled={!isRunning || cashedAt!==null}>Cash Out</button>
+          
         </div>
       </div>
 
