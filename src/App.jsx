@@ -263,7 +263,8 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
 
   function computeMultiplier(safeCount, mines) {
     const ratio = mines / 25;
-    const base = 0.02 + Math.pow(ratio, 1.2) * 1.2;
+    // Lowered scaling for less aggressive profits
+    const base = 0.01 + Math.pow(ratio, 1.1) * 1.0;
     return Math.max(1, (1 + base) ** safeCount);
 }
 
