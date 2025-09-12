@@ -64,7 +64,7 @@ export default function App(){
         </div>
         <div style={{display:'flex',flexDirection:'column',gap:8}}>
           <button className={'nav-btn ' + (view==='crash' ? 'active' : '')} onClick={()=>setView('crash')}>Crash</button></div>
-          <button className={'nav-btn ' + (view==='mines' ? 'active' : '')} onClick={()= className="big-button">setView('mines')}>Mines</button>
+          <button className={'nav-btn ' + (view==='mines' ? 'active' : '')} onClick={() => setView('mines')}>Mines</button>
           <button className={'nav-btn ' + (view==='history' ? 'active' : '')} onClick={()=>setView('history')}>History</button>
         </div>
 
