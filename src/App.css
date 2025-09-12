@@ -102,3 +102,14 @@ header {
 .demo-label, .seed, .target {
   display: none !important;
 }
+
+/* === Dark Mode Translucent Panels === */
+.panel, .content, .game-panel {
+  background: rgba(20, 20, 30, 0.6); /* translucent dark */
+  border: 1px solid rgba(124, 58, 237, 0.4); /* faint purple border */
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #f1f1f1;
+}
