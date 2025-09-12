@@ -261,12 +261,15 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     }
   }
 
-  function computeMultiplier(safeCount, mines) {
-    const ratio = mines / 25;
-    // Lowered scaling for less aggressive profits
-    const base = 0.01 + Math.pow(ratio, 1.1) * 1.0;
-    return Math.max(1, (1 + base) ** safeCount);
-}
+  function computeMultiplier(safeRevealed){
+    // dynamic multiplier: lower profit for small mine counts
+    const safeTotal = total - mines
+    const mineFactor = 0.18 + (mines / total) * 1.1
+    const perSafe = 0.28 * mineFactor
+    const base = 1 + safeRevealed * perSafe * (safeTotal / Math.max(1, safeTotal))
+    const multiplier = Math.max(0, base * (1 - 0.06))
+    return multiplier
+  }
 
   function computeLive(){
     const revealedCount = Object.keys(revealed).length
