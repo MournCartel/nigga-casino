@@ -14,17 +14,7 @@ function loadState(){
 }
 function saveState(obj){ try{ localStorage.setItem(LS_KEY, JSON.stringify(obj)) }catch(e){} }
 
-export default function App()
-  function handleCrashButton() {
-    if (crashRunning) {
-      handleCrashCashout();
-    } else if (crashCrashed) {
-      startNewCrashGame();
-    } else {
-      startCrash();
-    }
-  }
-    {
+export default function App(){
   const [view, setView] = useState('crash') // crash | mines | history
   const [data, setData] = useState(()=> loadState())
   const [balance, setBalance] = useState(()=> {
@@ -42,10 +32,8 @@ export default function App()
       const next = { stats: {...prev.stats}, records: [...prev.records, result] }
       // update totals
       next.stats.totalBet = (next.stats.totalBet || 0) + (result.bet || 0)
-      // count net profit only
-      const net = (result.profit || 0)
-      if (net > 0) next.stats.totalWon = (next.stats.totalWon || 0) + net
-      if (net < 0) next.stats.totalLost = (next.stats.totalLost || 0) + Math.abs(net)
+      if (result.payout && result.payout > 0) next.stats.totalWon = (next.stats.totalWon || 0) + result.payout
+      if (result.profit < 0) next.stats.totalLost = (next.stats.totalLost || 0) + Math.abs(result.profit)
       saveState(next)
       return next
     })
@@ -94,7 +82,7 @@ export default function App()
 
       <div style={{flex:1, display:'flex', flexDirection:'column'}}>
         <header className="header">
-          <div style={{fontWeight:800, fontSize:18}}>Mourgan — Demo</div>
+          <div style={{fontWeight:800, fontSize:18}}>Minecraft Casino — Demo</div>
           <div style={{display:'flex',gap:12,alignItems:'center'}}>
             <div style={{textAlign:'right'}} className="small"><div>Player1</div><div style={{fontWeight:800}}>${balance.toFixed(2)}</div></div>
             <div>
@@ -121,6 +109,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
   const [isRunning, setIsRunning] = useState(false)
   const [multiplier, setMultiplier] = useState(1.00)
   const [cashedAt, setCashedAt] = useState(null)
+  const [crashed, setCrashed] = useState(false)
   const rafRef = useRef(null)
   const lastRef = useRef(null)
   const multiplierRef = useRef(1.00)
@@ -145,6 +134,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     // deduct bet immediately
     setBalance(b => Math.round((b - bet)*100)/100)
     setCashedAt(null)
+    setCrashed(false)
     setIsRunning(true)
     setMultiplier(1.00)
     multiplierRef.current = 1.00
@@ -168,6 +158,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
 
     // bust check
     if (multiplierRef.current >= target){
+      setCrashed(true);
       // bust event
       setIsRunning(false)
       setGlobalLock(false)
@@ -205,17 +196,17 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
           <input className="input" type="number" value={bet} onChange={e=>setBet(Number(e.target.value)||0)} />
         </div>
         <div style={{marginLeft:'auto'}} className="small">Target (hidden)</div>
-        <div>
-          <button className="btn primary" onClick={start} disabled={isRunning || globalLock}>Start</button>
+        
+        <div style={{marginLeft:'auto'}} className="crash-button-container">
+          <button className="big-button" onClick={() => { if (isRunning) { doCashout(); } else { start(); } }}>
+            {isRunning ? 'Cash Out' : (cashedAt !== null || crashed) ? 'New Game' : 'Start'}
+          </button>
         </div>
-        <div>
-          <button className="btn ghost" onClick={doCashout} disabled={!isRunning || cashedAt!==null}>Cash Out</button>
-        </div>
-      </div>
+
 
       <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:220}} className="panel">
         <div style={{textAlign:'center'}}>
-          <div style={{fontSize:56,fontWeight:900}}>{multiplier.toFixed(2)}x</div>
+          <div className={`crash-text ${crashed ? 'crashed' : ''}`} style={{fontSize:56,fontWeight:900}}>{multiplier.toFixed(2)}x</div>
           <div className="small" style={{marginTop:8}}>{isRunning ? 'RUNNING' : cashedAt ? `Cashed at ${cashedAt}x` : 'READY'}</div>
         </div>
       </div>
