@@ -32,8 +32,10 @@ export default function App(){
       const next = { stats: {...prev.stats}, records: [...prev.records, result] }
       // update totals
       next.stats.totalBet = (next.stats.totalBet || 0) + (result.bet || 0)
-      if (result.payout && result.payout > 0) next.stats.totalWon = (next.stats.totalWon || 0) + result.payout
-      if (result.profit < 0) next.stats.totalLost = (next.stats.totalLost || 0) + Math.abs(result.profit)
+      // count net profit only
+      const net = (result.profit || 0)
+      if (net > 0) next.stats.totalWon = (next.stats.totalWon || 0) + net
+      if (net < 0) next.stats.totalLost = (next.stats.totalLost || 0) + Math.abs(net)
       saveState(next)
       return next
     })
