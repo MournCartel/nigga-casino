@@ -49,3 +49,24 @@ input[type=number] {
 /* header tweaks: larger player name and balance highlight */
 .header .player { font-size:18px; font-weight:800; }
 .header .balance { font-size:20px; font-weight:900; color: var(--accent); }
+
+
+/* Smooth glowing hover effects */
+button, .big-button, .nav-btn {
+  transition: all 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+}
+button:hover, .big-button:hover, .nav-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 16px rgba(160, 100, 255, 0.6);
+}
+button:active, .big-button:active, .nav-btn:active {
+  transform: scale(0.97);
+}
+
+/* Card / panel glow effect */
+.game-panel, .history-panel {
+  transition: box-shadow 0.3s ease-in-out;
+}
+.game-panel:hover, .history-panel:hover {
+  box-shadow: 0 0 20px rgba(160, 100, 255, 0.4);
+}

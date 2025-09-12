@@ -84,7 +84,7 @@ export default function App(){
 
       <div style={{flex:1, display:'flex', flexDirection:'column'}}>
         <header className="header">
-          <div style={{fontWeight:800, fontSize:18}}>Minecraft Casino — Demo</div>
+          <div style={{fontWeight:800, fontSize:18}}>Mourgan — Demo</div>
           <div style={{display:'flex',gap:12,alignItems:'center'}}>
             <div style={{textAlign:'right'}} className="small"><div>Player1</div><div style={{fontWeight:800}}>${balance.toFixed(2)}</div></div>
             <div>
