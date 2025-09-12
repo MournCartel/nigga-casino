@@ -86,7 +86,7 @@ export default function App(){
         <header className="header">
           <div style={{fontWeight:800, fontSize:18}}>Mourgan — </div>
           <div style={{display:'flex',gap:12,alignItems:'center'}}>
-            <div style={{textAlign:'right'}} className="small"><div>Player1</div><div style={{fontWeight:800}}><span class="balance">${balance.toFixed(2)}</span></div></div>
+            <div style={{textAlign:'right'}} className="small"><div>Player1</div><div style={{fontWeight:800}}>${balance.toFixed(2)}</div></div>
             <div>
               <button className="btn primary" onClick={doTopUp}>+ TOP UP</button>
             </div>
@@ -114,7 +114,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
   const rafRef = useRef(null)
   const lastRef = useRef(null)
   const multiplierRef = useRef(1.00)
-  const [
+  const [target, setTarget] = useState(2.0)
   const baseSpeedRef = useRef(0.7) // tuning value
   const accel = 1.6 // exponent for speed growth
 
@@ -122,7 +122,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     return ()=>{ if(rafRef.current) cancelAnimationFrame(rafRef.current) }
   },[])
 
-  function compute
+  function computeTargetFromSeed(){
     // generate a random-ish crash point using Math.random ()
     const r = Math.random()
     const val = 1 + Math.pow(1 - r, -1.1) * 0.6
@@ -139,8 +139,8 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     setMultiplier(1.00)
     multiplierRef.current = 1.00
     lastRef.current = null
-    const t = compute
-    set
+    const t = computeTargetFromSeed()
+    setTarget(t)
     // start RAF
     rafRef.current = requestAnimationFrame(tick)
     setGlobalLock(true)
@@ -150,14 +150,14 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
     if (!lastRef.current) lastRef.current = ts
     const dt = (ts - lastRef.current) / 1000
     lastRef.current = ts
-    // speed grows as multiplier grows (not based on 
+    // speed grows as multiplier grows (not based on target)
     const speed = baseSpeedRef.current * Math.pow(Math.max(1, multiplierRef.current), accel - 1)
     const next = multiplierRef.current + dt * speed
     multiplierRef.current = Math.round(next * 100) / 100
     setMultiplier(multiplierRef.current)
 
     // bust check
-    if (multiplierRef.current >= 
+    if (multiplierRef.current >= target){
       // bust event
       setIsRunning(false)
       setGlobalLock(false)
@@ -192,9 +192,9 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
       <div style={{display:'flex',gap:12,alignItems:'center'}}>
         <div style={{display:'flex',flexDirection:'column'}}>
           <label className="small">Bet</label>
-          <input className="input" type="number" value={bet} onChange={e=>setBet(Number(e.
+          <input className="input" type="number" value={bet} onChange={e=>setBet(Number(e.target.value)||0)} />
         </div>
-        <div style={{marginLeft:'auto'}} className="small"></div>
+        <div style={{marginLeft:'auto'}} className="small">Target (hidden)</div>
         <div>
           <button className="btn primary" onClick={start} disabled={isRunning || globalLock}>Start</button>
         </div>
@@ -307,13 +307,13 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
       <div style={{display:'flex',gap:12,alignItems:'center'}}>
         <div style={{display:'flex',flexDirection:'column'}}>
           <label className="small">Bet</label>
-          <input className="input" type="number" value={stake} onChange={e=>setStake(Number(e.
+          <input className="input" type="number" value={stake} onChange={e=>setStake(Number(e.target.value)||0)} />
         </div>
         <div style={{display:'flex',flexDirection:'column'}}>
           <label className="small">Mines</label>
-          <input className="input small" type="number" min="1" max={total-1} value={mines} onChange={e=>setMines(Math.max(1, Math.min(total-1, Number(e.
+          <input className="input small" type="number" min="1" max={total-1} value={mines} onChange={e=>setMines(Math.max(1, Math.min(total-1, Number(e.target.value)||1)))} />
         </div>
-        <div style={{marginLeft:'auto'}} className="small"></div>
+        <div style={{marginLeft:'auto'}} className="small">Seed: N/A</div>
       </div>
 
       <div className="small" style={{marginBottom:8}}>
