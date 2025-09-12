@@ -313,7 +313,7 @@ function MinesPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
           <label className="small">Mines</label>
           <input className="input small" type="number" min="1" max={total-1} value={mines} onChange={e=>setMines(Math.max(1, Math.min(total-1, Number(e.target.value)||1)))} />
         </div>
-        <div style={{marginLeft:'auto'}} className="small">Seed: N/A</div>
+        <div style={{marginLeft:'auto'}} className="small"><span style={{display:'none'}}>Seed:</span> N/A</div>
       </div>
 
       <div className="small" style={{marginBottom:8}}>
