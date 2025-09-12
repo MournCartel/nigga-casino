@@ -63,7 +63,10 @@ export default function App(){
           <div><strong style={{fontSize:18}}>GAMES</strong></div>
         </div>
         <div style={{display:'flex',flexDirection:'column',gap:8}}>
-          <button className={'nav-btn ' + (view==='crash' ? 'active' : '')} onClick={()=>setView('crash')}>Crash</button></div>
+          <button className={'nav-btn ' + (view==='crash' ? 'active' : '')} onClick={() => setView('crash')}>Crash</button>
+          <button className={'nav-btn ' + (view==='mines' ? 'active' : '')} onClick={() => setView('mines')}>Mines</button>
+          <button className={'nav-btn ' + (view==='history' ? 'active' : '')} onClick={() => setView('history')}>History</button>
+        </div></div></div> onClick={()=>setView('crash')}>Crash</button></div>
           <button className={'nav-btn ' + (view==='mines' ? 'active' : '')} onClick={() => setView('mines')}>Mines</button>
           <button className={'nav-btn ' + (view==='history' ? 'active' : '')} onClick={()=>setView('history')}>History</button>
         </div>
@@ -83,7 +86,7 @@ export default function App(){
       <div style={{flex:1, display:'flex', flexDirection:'column'}}>
         <header className="header">
           <div style={{fontWeight:800, fontSize:18}}>Minecraft Casino — Demo</div>
-          <div style={{display:'flex',gap:12,alignItems:'center'}}>
+          <div style={{display:'flex',gap:12,alignItems:'center'}}><div className="mines-button-container" style={{display:'flex',justifyContent:'center'}}>{/* injected */}</div>
             <div style={{textAlign:'right'}} className="small"><div>Player1</div><div style={{fontWeight:800}}>${balance.toFixed(2)}</div></div>
             <div>
               <button className="btn primary" onClick={doTopUp}>+ TOP UP</button>
@@ -93,9 +96,17 @@ export default function App(){
 
         <main className="main">
           <div className="panel" style={{flex:1, minHeight:440}}>
-            {view==='crash' && <CrashPanel balance={balance} setBalance={setBalance} pushResult={pushResult} globalLock={globalLock} setGlobalLock={setGlobalLock} />}
-            {view==='mines' && <MinesPanel balance={balance} setBalance={setBalance} pushResult={pushResult} globalLock={globalLock} setGlobalLock={setGlobalLock} />}
-            {view==='history' && <HistoryPanel data={data} />}
+            <div className="tab-area">
+              <div className={'tab-content ' + (view==='crash' ? '' : 'hidden')}>
+                <CrashPanel balance={balance} setBalance={setBalance} pushResult={pushResult} globalLock={globalLock} setGlobalLock={setGlobalLock} />
+              </div>
+              <div className={'tab-content ' + (view==='mines' ? '' : 'hidden')}>
+                <MinesPanel balance={balance} setBalance={setBalance} pushResult={pushResult} globalLock={globalLock} setGlobalLock={setGlobalLock} />
+              </div>
+              <div className={'tab-content ' + (view==='history' ? '' : 'hidden')}>
+                <HistoryPanel data={data} />
+              </div>
+            </div>
           </div>
         </main>
       </div>
@@ -194,7 +205,7 @@ function CrashPanel({balance, setBalance, pushResult, globalLock, setGlobalLock}
         </div>
         <div style={{marginLeft:'auto'}} className="small">Target (hidden)</div>
         <div>
-          <div className="crash-button-container"><button className="big-button">{crashActive ? "Cash Out" : "Start"}</button>
+          <div className="crash-button-container"><button className="nav-btn">{crashActive ? "Cash Out" : "Start"}</button>
         </div>
         <div>
           
